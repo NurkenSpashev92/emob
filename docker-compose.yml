@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: on-failure
+    env_file:
+      - .env
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+  app:
+    build:
+      context: .
+      dockerfile: devops/Dockerfile
+    container_name: app
+    restart: on-failure
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    ports:
+      - "${APP_PORT}:8080"
+
+volumes:
+  postgres_data:
