@@ -1,11 +1,18 @@
 #!/bin/sh
 
-# Загружаем переменные окружения
+# Загружаем переменные окружения из .env
 if [ -f .env ]; then
     export $(grep -v '^#' .env | xargs)
 fi
 
+# Вывод всех переменных для отладки
+echo "-----------------------------"
+echo "Loaded environment variables:"
+echo "-----------------------------"
+env | sort
+
 export DB_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${POSTGRES_DB}?sslmode=disable"
+echo "DB_URL=$DB_URL"
 
 # Ожидаем, пока PostgreSQL будет доступен
 echo "Ожидание запуска PostgreSQL..."

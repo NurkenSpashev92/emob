@@ -54,7 +54,7 @@ create_migration:
 	migrate create -ext sql -dir src/migrations -seq ${name}
 
 migrations_up:
-	$(COMPOSE) exec app sh -c "migrate -database $$DB_URL -path src/migrations up"
+	$(COMPOSE) exec app sh -c "migrate -database $$DB_URL -path migrations up"
 
 clean:
 	$(COMPOSE) down -v

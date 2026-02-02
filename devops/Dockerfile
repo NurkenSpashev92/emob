@@ -1,23 +1,20 @@
-# ---- Build stage ----
-FROM golang:1.25-alpine AS build
+FROM golang:alpine AS builder
 
-# Устанавливаем необходимые утилиты
-RUN apk update && apk add --no-cache git bash build-base postgresql-client curl
+RUN apk update && apk add --no-cache git bash build-base
 
-# Устанавливаем migrate в build-stage
 RUN go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
 WORKDIR /app
 
-COPY src/go.mod src/go.sum ./
-RUN go mod download
+COPY .env /app/.env
 
 COPY src .
 
-# Собираем Go приложение
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o app ./cmd/app
+RUN go mod download
 
-# Копируем entrypoint
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /app/main .
+
 COPY devops/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
@@ -25,4 +22,4 @@ EXPOSE 8080
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["./app"]
+CMD ["/app/main"]
