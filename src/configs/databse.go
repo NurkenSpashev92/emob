@@ -27,7 +27,7 @@ func (c *Config) DatabaseURL() string {
 
 func NewConfig() *Config {
 	return &Config{
-		DBHost:     getEnv("DB_HOST", "postgres"),
+		DBHost:     getEnv("DB_HOST", "localhost"),
 		DBPort:     getEnv("DB_PORT", "5432"),
 		DBUser:     getEnv("DB_USER", "emob"),
 		DBPassword: getEnv("DB_PASSWORD", "emob"),

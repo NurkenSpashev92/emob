@@ -10,7 +10,7 @@ import (
 )
 
 func RegisterRoutes(db *pgxpool.Pool) *fiber.App {
-	app := fiber.New()
+	app := fiber.New(initializers.NewFiberConfig())
 
 	app.Use(middleware.CorsHandler)
 	app.Use(initializers.NewLogger())
@@ -19,7 +19,12 @@ func RegisterRoutes(db *pgxpool.Pool) *fiber.App {
 	apiV1 := app.Group("/api/v1")
 	{
 		apiV1.Get("/healthcheck", handler.HealthCheck(db))
-		apiV1.Get("/subscription", handler.GetSubscriptions(db))
+
+		apiV1.Get("/subscriptions", handler.GetSubscriptions(db))
+		apiV1.Post("/subscriptions", handler.CreateSubscription(db))
+		apiV1.Get("/subscriptions/:id", handler.GetSubscription(db))
+		apiV1.Put("/subscriptions/:id", handler.UpdateSubscription(db))
+		apiV1.Delete("/subscriptions/:id", handler.DeleteSubscription(db))
 	}
 
 	return app

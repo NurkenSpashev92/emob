@@ -8,7 +8,6 @@ if [ -f .env ]; then
 fi
 
 export DB_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${POSTGRES_DB}?sslmode=disable"
-echo "DB_URL=$DB_URL"
 
 # Ожидаем, пока PostgreSQL будет доступен
 echo "Ожидание запуска PostgreSQL..."

@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"strconv"
 	"syscall"
 	"time"
 
@@ -33,10 +32,12 @@ func (a *App) Run() {
 	a.fiberApp = router.RegisterRoutes(database.Conn)
 	done := make(chan bool, 1)
 	go func() {
-		port, _ := strconv.Atoi(os.Getenv("APP_PORT"))
-		log.Printf("Server running on %d...\n", port)
+		portStr := os.Getenv("APP_PORT")
+		if portStr == "" {
+			portStr = "8080"
+		}
 
-		err := a.fiberApp.Listen(fmt.Sprintf(":%d", port))
+		err := a.fiberApp.Listen("0.0.0.0:" + portStr)
 		if err != nil {
 			panic(fmt.Sprintf("http server error: %s", err))
 		}

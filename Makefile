@@ -57,10 +57,10 @@ postgres:
 	$(COMPOSE) exec postgres psql -U $$DB_USER -d $$DB_NAME
 
 create_migration:
-	migrate create -ext sql -dir src/migrations -seq ${name}
+	$(COMPOSE) exec app sh -c "migrate create -ext sql -dir /app/migrations -seq ${name}"
 
 migrations_up:
-	$(COMPOSE) exec app sh -c "migrate -database $$DB_URL -path migrations up"
+	$(COMPOSE) exec app sh -c "migrate -database $$DB_URL -path /app/migrations up"
 
 clean:
 	$(COMPOSE) down -v
