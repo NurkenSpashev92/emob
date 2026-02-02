@@ -8,12 +8,12 @@ import (
 // HealthCheck godoc
 // @Summary      Health Check
 // @Description  Checks if the application and database are running
-// @Tags         Health
+// @Tags         HealthCheck
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  interface{}
 // @Failure      503  {object}  interface{}
-// @Router       /health [get]
+// @Router       /healthcheck [get]
 func HealthCheck(db *pgxpool.Pool) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		if err := db.Ping(c.Context()); err != nil {

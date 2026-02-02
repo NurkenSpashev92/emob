@@ -19,6 +19,7 @@ func RegisterRoutes(db *pgxpool.Pool) *fiber.App {
 	apiV1 := app.Group("/api/v1")
 	{
 		apiV1.Get("/healthcheck", handler.HealthCheck(db))
+		apiV1.Get("/subscription", handler.GetSubscriptions(db))
 	}
 
 	return app

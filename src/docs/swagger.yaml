@@ -1,12 +1,32 @@
-basePath: /api/v1
-host: localhost:8080
+definitions:
+  models.Subscription:
+    properties:
+      created_at:
+        example: "2026-01-01T12:00:00Z"
+        type: string
+      end_date:
+        example: "2026-12-31"
+        type: string
+      id:
+        example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+      price:
+        example: 1999
+        type: integer
+      service_name:
+        example: Netflix
+        type: string
+      start_date:
+        example: "2026-01-01"
+        type: string
+      user_id:
+        example: 60601fee-2bf1-4721-ae6f-7636e79a0cba
+        type: string
+    type: object
 info:
   contact: {}
-  description: API documentation for SuperApp
-  title: SuperApp API
-  version: "1.0"
 paths:
-  /health:
+  /healthcheck:
     get:
       consumes:
       - application/json
@@ -22,5 +42,36 @@ paths:
           schema: {}
       summary: Health Check
       tags:
-      - Health
+      - HealthCheck
+  /subscription:
+    get:
+      consumes:
+      - application/json
+      description: Returns list of subscriptions with pagination
+      parameters:
+      - default: 10
+        description: Limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Subscription'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get subscriptions
+      tags:
+      - Subscriptions
 swagger: "2.0"

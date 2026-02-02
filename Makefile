@@ -10,8 +10,8 @@ help:
 	@echo "  make install          🚀 Deploy project"
 	@echo "  make up               🚀 Start containers"
 	@echo "  make down             🛑 Stop containers"
-	@echo "  make build            🔨 Build containers"
-	@echo "  make restart          🔁 Restart containers"
+	@echo "  make build            � Build containers"
+	@echo "  make restart          � Restart containers"
 	@echo "  make logs             📜 Show logs"
 	@echo "  make ps               📦 Show containers"
 	@echo "  make app              🐹 Enter app container"
@@ -23,7 +23,9 @@ help:
 	@echo "  make prune            💣 Docker system prune"
 	@echo ""
 
-
+## -----------------------------
+## 🐳 Docker
+## -----------------------------
 install: build up
 
 up:
