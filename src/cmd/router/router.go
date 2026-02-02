@@ -5,10 +5,16 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/nurkenspashev92/emob/internal/handler"
+	"github.com/nurkenspashev92/emob/internal/initializers"
+	"github.com/nurkenspashev92/emob/internal/middleware"
 )
 
 func RegisterRoutes(db *pgxpool.Pool) *fiber.App {
 	app := fiber.New()
+
+	app.Use(middleware.CorsHandler)
+	app.Use(initializers.NewLogger())
+	app.Use(initializers.NewSwagger())
 
 	apiV1 := app.Group("/api/v1")
 	{

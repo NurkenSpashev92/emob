@@ -1,4 +1,4 @@
-FROM golang:alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 RUN apk update && apk add --no-cache git bash build-base
 
@@ -10,8 +10,7 @@ COPY .env /app/.env
 
 COPY src .
 
-RUN go mod download
-
+RUN go mod tidy
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /app/main .
 
