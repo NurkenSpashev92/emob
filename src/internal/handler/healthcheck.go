@@ -11,8 +11,8 @@ import (
 // @Tags         Health
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  map[string]string{"status":"ok","message":"success"}
-// @Failure      503  {object}  map[string]string{"status":"fail","message":"database not reachable"}
+// @Success      200  {object}  interface{}
+// @Failure      503  {object}  interface{}
 // @Router       /health [get]
 func HealthCheck(db *pgxpool.Pool) fiber.Handler {
 	return func(c *fiber.Ctx) error {

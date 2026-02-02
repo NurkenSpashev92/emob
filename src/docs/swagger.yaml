@@ -1,0 +1,26 @@
+basePath: /api/v1
+host: localhost:8080
+info:
+  contact: {}
+  description: API documentation for SuperApp
+  title: SuperApp API
+  version: "1.0"
+paths:
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Checks if the application and database are running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema: {}
+        "503":
+          description: Service Unavailable
+          schema: {}
+      summary: Health Check
+      tags:
+      - Health
+swagger: "2.0"

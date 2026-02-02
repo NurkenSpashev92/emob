@@ -18,6 +18,7 @@ help:
 	@echo "  make postgres         🐘 Enter postgres container"
 	@echo "  make create_migration 📝 Create migrations"
 	@echo "  make migrations_up    ⬆️ Run migrations"
+	@echo "  make swagger          📖 Generate Swagger docs"
 	@echo "  make clean            🧹 Remove containers + volumes"
 	@echo "  make prune            💣 Docker system prune"
 	@echo ""
@@ -46,6 +47,9 @@ ps:
 
 app:
 	$(COMPOSE) exec app sh
+
+swagger:
+	$(COMPOSE) exec -T app sh -c "swag init -g ./cmd/app/main.go -o ./docs"
 
 postgres:
 	$(COMPOSE) exec postgres psql -U $$DB_USER -d $$DB_NAME
