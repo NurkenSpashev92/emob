@@ -2,7 +2,7 @@ services:
   postgres:
     image: postgres:latest
     container_name: postgres
-    restart: on-failure
+    restart: unless-stopped
     env_file:
       - .env
     ports:
@@ -15,7 +15,9 @@ services:
       context: .
       dockerfile: devops/Dockerfile
     container_name: app
-    restart: on-failure
+    restart: unless-stopped
+    volumes:
+      - ./src:/app
     env_file:
       - .env
     depends_on:

@@ -29,6 +29,7 @@
 
 # Docker build output (example, adjust as needed)
 # For example, if you output a specific binary or temporary file
+src/main
 bin/
 tmp/
 .env

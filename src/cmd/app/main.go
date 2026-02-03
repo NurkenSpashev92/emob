@@ -1,34 +1,67 @@
-package main
+package app
 
 import (
+	"context"
+	"fmt"
 	"log"
-	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
+
+	"github.com/gofiber/fiber/v2"
+
+	"github.com/nurkenspashev92/emob/cmd/router"
+	"github.com/nurkenspashev92/emob/configs"
+	"github.com/nurkenspashev92/emob/pkg/store"
 )
 
-func main() {
-	log.Println("app started")
+type App struct {
+	fiberApp *fiber.App
+}
 
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
-	})
+func (a *App) Run() {
+	cfg := configs.NewConfig()
 
-	// Настраиваем HTTP сервер
-	port := os.Getenv("APP_PORT")
-	if port == "" {
-		port = "8080"
+	database, err := store.NewPostgresDb(cfg)
+	if err != nil {
+		log.Fatalf("Failed to initialize the database: %v", err)
+	}
+	defer database.Close()
+
+	a.fiberApp = router.RegisterRoutes(database.Conn)
+	done := make(chan bool, 1)
+	go func() {
+		portStr := os.Getenv("APP_PORT")
+		if portStr == "" {
+			portStr = "8080"
+		}
+
+		err := a.fiberApp.Listen("0.0.0.0:" + portStr)
+		if err != nil {
+			panic(fmt.Sprintf("http server error: %s", err))
+		}
+	}()
+
+	go a.Shutdown(done)
+	<-done
+	log.Println("Graceful shutdown complete.")
+}
+
+func (fiberServer *App) Shutdown(done chan bool) {
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
+	<-ctx.Done()
+	log.Println("shutting down gracefully, press Ctrl+C again to force")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := fiberServer.fiberApp.ShutdownWithContext(ctx); err != nil {
+		log.Printf("Server forced to shutdown with error: %v", err)
 	}
 
-	srv := &http.Server{
-		Addr:         ":" + port,
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 5 * time.Second,
-	}
+	log.Println("Server exiting")
 
-	log.Printf("🚀 App running on port %s", port)
-	if err := srv.ListenAndServe(); err != nil {
-		log.Fatal(err)
-	}
+	done <- true
 }

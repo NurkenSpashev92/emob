@@ -1,6 +1,8 @@
 #!/bin/sh
 
-# Загружаем переменные окружения
+set -e
+
+# Загружаем переменные окружения из .env
 if [ -f .env ]; then
     export $(grep -v '^#' .env | xargs)
 fi
