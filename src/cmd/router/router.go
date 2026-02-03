@@ -22,6 +22,7 @@ func RegisterRoutes(db *pgxpool.Pool) *fiber.App {
 
 		apiV1.Get("/subscriptions", handler.GetSubscriptions(db))
 		apiV1.Post("/subscriptions", handler.CreateSubscription(db))
+		apiV1.Get("/subscriptions/total", handler.GetSubscriptionsTotal(db))
 		apiV1.Get("/subscriptions/:id", handler.GetSubscription(db))
 		apiV1.Put("/subscriptions/:id", handler.UpdateSubscription(db))
 		apiV1.Delete("/subscriptions/:id", handler.DeleteSubscription(db))
