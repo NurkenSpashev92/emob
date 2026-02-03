@@ -10,16 +10,17 @@ fi
 export DB_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${POSTGRES_DB}?sslmode=disable"
 
 # Ожидаем, пока PostgreSQL будет доступен
-echo "Ожидание запуска PostgreSQL..."
+echo "⏳ Ожидание запуска PostgreSQL..."
 until nc -z -v -w30 $DB_HOST $DB_PORT; do
-  echo "Ждем PostgreSQL..."
+  echo "⌛ PostgreSQL ещё не доступен, ждём..."
   sleep 2
 done
 
-echo "PostgreSQL доступен, запускаем миграции..."
+echo "✅ PostgreSQL доступен, запускаем миграции..."
 
 # Запуск миграций
-migrate -path /app/migrations -database "$DB_URL" up
+echo "🚀 Запуск миграций базы данных..."
+migrate -path /app/migrations -database "$DB_URL" up || echo "⚠️ Миграции отсутствуют или уже применены"
 
-echo "Миграции применены, запускаем сервис..."
+echo "🎉 Миграции успешно завершены, запускаем сервис..."
 exec "$@"

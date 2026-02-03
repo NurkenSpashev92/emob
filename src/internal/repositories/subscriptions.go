@@ -207,3 +207,42 @@ func (repo *SubscriptionRepository) DeleteSubscription(
 
 	return nil
 }
+
+func (repo *SubscriptionRepository) GetTotalSubscriptionsCost(
+	ctx context.Context,
+	dateFrom string,
+	dateTo string,
+	userID string,
+	serviceName string,
+) (float64, error) {
+
+	query := `
+		SELECT COALESCE(SUM(price), 0)
+		FROM subscriptions
+		WHERE start_date >= $1
+		  AND start_date <= $2
+	`
+
+	args := []interface{}{dateFrom, dateTo}
+	argID := 3
+
+	if userID != "" {
+		query += fmt.Sprintf(" AND user_id = $%d", argID)
+		args = append(args, userID)
+		argID++
+	}
+
+	if serviceName != "" {
+		query += fmt.Sprintf(" AND service_name ILIKE $%d", argID)
+		args = append(args, serviceName)
+	}
+
+	fmt.Println(query)
+	var total float64
+	err := repo.db.QueryRow(ctx, query, args...).Scan(&total)
+	if err != nil {
+		return 0, fmt.Errorf("failed to calculate total subscriptions cost: %w", err)
+	}
+
+	return total, nil
+}

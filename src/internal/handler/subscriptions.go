@@ -175,3 +175,54 @@ func DeleteSubscription(db *pgxpool.Pool) fiber.Handler {
 		return c.SendStatus(fiber.StatusNoContent)
 	}
 }
+
+// GetSubscriptionsTotal godoc
+// @Summary      Get total subscriptions cost
+// @Description  Returns total cost of subscriptions for selected period with optional filters
+// @Tags         Subscriptions
+// @Accept       json
+// @Produce      json
+// @Param        date_from    query     string  true   "Start date (YYYY-MM-DD)"
+// @Param        date_to      query     string  true   "End date (YYYY-MM-DD)"
+// @Param        user_id      query     string  false  "User ID"
+// @Param        service_name query     string  false  "Service name"
+// @Success      200          {object}  map[string]float64
+// @Failure      400          {object}  map[string]string
+// @Failure      500          {object}  map[string]string
+// @Router       /api/v1/subscriptions/total [get]
+func GetSubscriptionsTotal(db *pgxpool.Pool) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		dateFrom := c.Query("date_from")
+		dateTo := c.Query("date_to")
+
+		if dateFrom == "" || dateTo == "" {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"status":  "error",
+				"message": "date_from и date_to обязательны",
+			})
+		}
+
+		userID := c.Query("user_id")
+		serviceName := c.Query("service_name")
+
+		repo := repositories.NewSubscriptionRepository(db)
+
+		total, err := repo.GetTotalSubscriptionsCost(
+			c.Context(),
+			dateFrom,
+			dateTo,
+			userID,
+			serviceName,
+		)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"status":  "error",
+				"message": err.Error(),
+			})
+		}
+
+		return c.JSON(fiber.Map{
+			"total_price": total,
+		})
+	}
+}
