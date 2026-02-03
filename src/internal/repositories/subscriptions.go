@@ -44,7 +44,7 @@ func (repo *SubscriptionRepository) GetAllSubscriptions(
 	}
 	defer rows.Close()
 
-	subscriptions := make([]models.Subscription, 0)
+	subscriptions := make([]models.Subscription, 1)
 
 	for rows.Next() {
 		var s models.Subscription
